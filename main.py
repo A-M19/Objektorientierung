@@ -9,7 +9,7 @@ st.write("# EKG APP")
 st.write("## Versuchsperson auswählen")
 
 person_list = get_person_data()
-person_names = [p.get_full_name() for p in person_list]  # Format: "Huber, Julian"
+person_names = [p.get_full_name() for p in person_list]
 
 selected_name = st.selectbox("Versuchsperson", options=person_names, key="sbVersuchsperson")
 
@@ -36,7 +36,6 @@ if person.ekg_tests:
     selected_ekg_label = st.selectbox("EKG-Test", options=list(ekg_options.keys()))
     ekg_dict = ekg_options[selected_ekg_label]
 
-    # ── EKG-Objekt erstellen & plotten ─────────────────────────────────────
     ekg = EKGdata(ekg_dict)
     ekg.plot_time_series()
     st.plotly_chart(ekg.fig, use_container_width=True)
