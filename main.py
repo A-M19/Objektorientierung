@@ -32,12 +32,37 @@ with col2:
 st.write("## EKG-Test auswählen")
 
 if person.ekg_tests:
-    ekg_options = {f"Test {t['id']} – {t['date']}": t for t in person.ekg_tests}
-    selected_ekg_label = st.selectbox("EKG-Test", options=list(ekg_options.keys()))
+    # 'enumerate(..., 1)' sorgt dafür, dass die Auswahl für jede Person immer bei Test 1 startet
+    ekg_options = {f"Test {idx} – {t['date']}": t for idx, t in enumerate(person.ekg_tests, 1)}
+    
+    # Der dynamische Key sorgt dafür, dass sich das Dropdown beim Personenwechsel automatisch zurücksetzt
+    selected_ekg_label = st.selectbox(
+        "EKG-Test", 
+        options=list(ekg_options.keys()), 
+        key=f"sbEKG_{person.get_full_name()}"
+    )
     ekg_dict = ekg_options[selected_ekg_label]
 
+    # EKG-Objekt instanziieren
     ekg = EKGdata(ekg_dict)
+    
+    # 1. Peaks über den selbstgeschriebenen Algorithmus berechnen
+    ekg.find_peaks()
+    
+    # 2. Herzfrequenz basierend auf den Peaks schätzen
+    herzfrequenz = ekg.estimate_hr()
+    
+    # 3. Herzfrequenz als schöne Dashboard-Metrik anzeigen
+    st.metric(label="Durchschnittliche Herzfrequenz", value=f"{herzfrequenz:.1f} bpm")
+    
+    # 4. Zeitreihe plotten (zeichnet automatisch die roten Peak-Punkte ein)
     ekg.plot_time_series()
-    st.plotly_chart(ekg.fig, use_container_width=True)
+    # 'width="stretch"' entfernt die Warnung im VS-Code Terminal
+    st.plotly_chart(ekg.fig, width="stretch")
 else:
     st.info("Für diese Person sind keine EKG-Tests vorhanden.")
+
+
+
+if __name__ == "__main__":
+    pass 
