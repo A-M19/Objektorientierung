@@ -52,7 +52,7 @@ if person.ekg_tests:
     # 2. Herzfrequenz basierend auf den Peaks schätzen
     herzfrequenz = ekg.estimate_hr()
     
-    # 3. Herzfrequenz als schöne Dashboard-Metrik anzeigen
+    # 3. Herzfrequenz als  Dashboard-Metrik anzeigen
     st.metric(label="Durchschnittliche Herzfrequenz", value=f"{herzfrequenz:.1f} bpm")
     
     # 4. Zeitreihe plotten (zeichnet automatisch die roten Peak-Punkte ein)
